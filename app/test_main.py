@@ -1,32 +1,52 @@
-from pytest_mock import MockerFixture
+from pytest import MonkeyPatch
 from app.main import cryptocurrency_action
 
 
-def test_exchange_rate_is_low_positive(mocker: MockerFixture) -> None:
-    mocker.patch("app.main.get_exchange_rate_prediction", return_value=105)
+def test_exchange_rate_is_exactly_five_percent_more(monkeypatch: MonkeyPatch
+                                                    ) -> None:
+    monkeypatch.setattr(
+        "app.main.get_exchange_rate_prediction",
+        lambda exchange_rate: 105,
+    )
 
     assert cryptocurrency_action(100) == "Do nothing"
 
 
-def test_exchange_rate_is_low_negative(mocker: MockerFixture) -> None:
-    mocker.patch("app.main.get_exchange_rate_prediction", return_value=95)
+def test_exchange_rate_is_exactly_five_percent_less(monkeypatch: MonkeyPatch
+                                                    ) -> None:
+    monkeypatch.setattr(
+        "app.main.get_exchange_rate_prediction",
+        lambda exchange_rate: 95,
+    )
 
     assert cryptocurrency_action(100) == "Do nothing"
 
 
-def test_difference_is_not_big(mocker: MockerFixture) -> None:
-    mocker.patch("app.main.get_exchange_rate_prediction", return_value=101)
+def test_difference_is_not_big(monkeypatch: MonkeyPatch
+                               ) -> None:
+    monkeypatch.setattr(
+        "app.main.get_exchange_rate_prediction",
+        lambda exchange_rate: 101,
+    )
 
     assert cryptocurrency_action(100) == "Do nothing"
 
 
-def test_exchange_rate_is_more(mocker: MockerFixture) -> None:
-    mocker.patch("app.main.get_exchange_rate_prediction", return_value=106)
+def test_exchange_rate_is_more(monkeypatch: MonkeyPatch
+                               ) -> None:
+    monkeypatch.setattr(
+        "app.main.get_exchange_rate_prediction",
+        lambda exchange_rate: 106,
+    )
 
     assert cryptocurrency_action(100) == "Buy more cryptocurrency"
 
 
-def test_exchange_rate_is_less(mocker: MockerFixture) -> None:
-    mocker.patch("app.main.get_exchange_rate_prediction", return_value=94)
+def test_exchange_rate_is_less(monkeypatch: MonkeyPatch
+                               ) -> None:
+    monkeypatch.setattr(
+        "app.main.get_exchange_rate_prediction",
+        lambda exchange_rate: 94,
+    )
 
     assert cryptocurrency_action(100) == "Sell all your cryptocurrency"
